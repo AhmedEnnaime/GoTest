@@ -1,7 +1,7 @@
 package models
 
 import (
-	"errors"
+	"fmt"
 
 	"database/sql"
 )
@@ -13,21 +13,48 @@ type user struct {
 }
 
 func (u *user) getUser(db *sql.DB) error {
-	return errors.New("not implemented")
+	statement := fmt.Sprintf("SELECT name, age FROM users WHERE id=%d", u.ID)
+	return db.QueryRow(statement).Scan(&u.Name, &u.Age)
 }
 
 func (u *user) updateUser(db *sql.DB) error {
-	return errors.New("not implemented")
+	statement := fmt.Sprintf("UPDATE users SET name='%s', age=%d WHERE id=%d", u.Name, u.Age, u.ID)
+	_, err := db.Exec(statement)
+	return err
 }
 
 func (u *user) deleteUser(db *sql.DB) error {
-	return errors.New("not implemented")
+	statement := fmt.Sprintf("DELETE FROM users WHERE id=%d", u.ID)
+	_, err := db.Exec(statement)
+	return err
 }
 
 func (u *user) createUser(db *sql.DB) error {
-	return errors.New("not implemented")
+	err := db.QueryRow("INSERT INTO users(name, age) VALUES($1, $2) RETURNING id", u.Name, u.Age).Scan(&u.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func getUsers(db *sql.DB, start, count int) ([]user, error) {
-	return nil, errors.New("not implemented")
+	statement := fmt.Sprintf("SELECT id, name, age FROM users LIMIT %d OFFSET %d", count, start)
+	rows, err := db.Query(statement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	users := []user{}
+	for rows.Next() {
+		var u user
+		if err := rows.Scan(&u.ID, &u.Name, &u.Age); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+
+	return users, nil
 }
