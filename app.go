@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"database/sql"
@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/AhmedEnnaime/GoTest/models"
 	"github.com/gorilla/mux"
 
 	_ "github.com/lib/pq"
@@ -42,7 +41,7 @@ func (a *App) getUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
-	u := models.User{ID: id}
+	u := User{ID: id}
 	if err := u.GetUser(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -65,7 +64,7 @@ func (a *App) getUsers(w http.ResponseWriter, r *http.Request) {
 	if start < 0 {
 		start = 0
 	}
-	users, err := models.GetUsers(a.DB, start, count)
+	users, err := GetUsers(a.DB, start, count)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -75,7 +74,7 @@ func (a *App) getUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
-	var u models.User
+	var u User
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Request payload")
@@ -98,7 +97,7 @@ func (a *App) updateUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
-	var u models.User
+	var u User
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -123,7 +122,7 @@ func (a *App) deleteUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
-	u := models.User{ID: id}
+	u := User{ID: id}
 	if err := u.DeleteUser(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return

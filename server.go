@@ -2,12 +2,10 @@ package main
 
 import (
 	"os"
-
-	"github.com/AhmedEnnaime/GoTest/config"
 )
 
 func main() {
-	a := config.App{}
+	a := App{}
 
 	a.Initialize(
 		os.Getenv("APP_DB_USERNAME"),

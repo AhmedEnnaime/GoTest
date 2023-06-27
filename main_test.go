@@ -1,4 +1,4 @@
-package tests
+package main
 
 import (
 	"log"
@@ -6,11 +6,9 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
-
-	"github.com/AhmedEnnaime/GoTest/config"
 )
 
-var a config.App
+var a App
 
 func TestMain(m *testing.M) {
 
