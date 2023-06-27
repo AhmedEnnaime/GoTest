@@ -42,7 +42,7 @@ func TestGetNonExistentUser(t *testing.T) {
 func TestCreateUser(t *testing.T) {
 	clearTable()
 
-	payload := []byte(`{"name": "test user", "age": 30}`)
+	payload := []byte(`{"name":"test user","age":30}`)
 	req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer(payload))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -56,7 +56,7 @@ func TestCreateUser(t *testing.T) {
 		t.Errorf("Expected user name to be 'test user'. Got '%v'", m["name"])
 	}
 
-	if m["age"] != 30 {
+	if m["age"] != 30.0 {
 		t.Errorf("Expected user age to be '30'. Got '%v'", m["age"])
 	}
 
@@ -122,7 +122,7 @@ func TestDeleteUser(t *testing.T) {
 
 	req, _ = http.NewRequest("GET", "/users/1", nil)
 	response = executeRequest(req)
-	checkResponseCode(t, http.StatusOK, response.Code)
+	checkResponseCode(t, http.StatusNotFound, response.Code)
 }
 
 func addUsers(count int) {
